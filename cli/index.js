@@ -74,6 +74,11 @@ async function createProject() {
     console.log('正在安装依赖...');
     execSync('pnpm install', { stdio: 'inherit' });
 
+    // 修复权限
+    console.log('正在修复权限...');
+    const username = execSync('whoami').toString().trim();
+    execSync(`chown -R ${username} .`, { stdio: 'inherit' });
+
     console.log(`
 项目创建成功！
 
