@@ -23,8 +23,8 @@ export async function fetchApi<T>(
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
+    const contentType = response.headers.get('content-type') || response.headers.get('Content-Type');
+    if (!contentType || !contentType.toLowerCase().includes('application/json')) {
       throw new Error('Response was not JSON');
     }
 

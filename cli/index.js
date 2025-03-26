@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
-import { execa } from 'execa';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { prompts } from 'prompts';
+import { existsSync, mkdirSync } from 'fs';
+import prompts from 'prompts';
 import chalk from 'chalk';
 import ora from 'ora';
 import fs from 'fs';
@@ -14,91 +14,71 @@ const __dirname = dirname(__filename);
 
 const TEMPLATE_REPO = 'https://github.com/hongling2511/cf-fullstack-starter.git';
 
-async function createProject(projectName) {
-  const spinner = ora('Creating project...').start();
-  
+async function createProject() {
   try {
-    // Clone the template
-    await execa('git', ['clone', TEMPLATE_REPO, projectName]);
-    
-    // Remove .git directory
-    await execa('rm', ['-rf', join(projectName, '.git')]);
-    
-    // Initialize new git repository
-    await execa('git', ['init'], { cwd: projectName });
-    
-    // Install dependencies
-    spinner.text = 'Installing dependencies...';
-    await execa('pnpm', ['install'], { cwd: projectName });
-    
-    // Create .env file
-    const envContent = `# Frontend
-VITE_API_URL=http://localhost:8787
+    // 获取项目名称
+    const response = await prompts({
+      type: 'text',
+      name: 'projectName',
+      message: '请输入项目名称:',
+      validate: value => value.length > 0 ? true : '项目名称不能为空'
+    });
 
-# Backend
-DATABASE_URL=file:./dev.db
-NODE_ENV=development`;
-    
-    fs.writeFileSync(join(projectName, '.env'), envContent);
-    
-    spinner.succeed(chalk.green('Project created successfully!'));
-    
-    console.log('\nNext steps:');
-    console.log(chalk.cyan(`  cd ${projectName}`));
-    console.log(chalk.cyan('  pnpm dev'));
-    
-    console.log('\nAdditional setup:');
-    console.log(chalk.cyan('  1. Update the project name in package.json files'));
-    console.log(chalk.cyan('  2. Update the database name in wrangler.toml'));
-    console.log(chalk.cyan('  3. Initialize your database:'));
-    console.log(chalk.cyan('     wrangler d1 create my-d1-db'));
-    console.log(chalk.cyan('     wrangler d1 execute my-d1-db --file=./schema.sql'));
-    
+    if (!response.projectName) {
+      console.log('项目创建已取消');
+      return;
+    }
+
+    const projectName = response.projectName;
+    const projectPath = join(process.cwd(), projectName);
+
+    // 检查目录是否已存在
+    if (existsSync(projectPath)) {
+      console.error(`错误: 目录 ${projectName} 已存在`);
+      return;
+    }
+
+    // 创建项目目录
+    mkdirSync(projectPath);
+    process.chdir(projectPath);
+
+    // 克隆模板仓库
+    console.log('正在克隆模板...');
+    execSync(`git clone ${TEMPLATE_REPO} .`, { stdio: 'inherit' });
+
+    // 删除 .git 目录
+    execSync('rm -rf .git', { stdio: 'inherit' });
+
+    // 初始化新的 git 仓库
+    execSync('git init', { stdio: 'inherit' });
+
+    // 安装依赖
+    console.log('正在安装依赖...');
+    execSync('npm install', { stdio: 'inherit' });
+
+    console.log(`
+项目创建成功！
+
+请按照以下步骤开始开发：
+
+1. 进入项目目录：
+   cd ${projectName}
+
+2. 启动开发服务器：
+   npm run dev
+
+3. 构建项目：
+   npm run build
+
+4. 部署到 Cloudflare：
+   npm run deploy
+
+祝您开发愉快！
+    `);
   } catch (error) {
-    spinner.fail(chalk.red('Failed to create project'));
-    console.error(error);
+    console.error('创建项目时出错:', error.message);
     process.exit(1);
   }
 }
 
-program
-  .name('create-cf-fullstack')
-  .description('Create a new Cloudflare Fullstack project')
-  .argument('[project-name]', 'Name of the project')
-  .action(async (projectName) => {
-    if (!projectName) {
-      const response = await prompts({
-        type: 'text',
-        name: 'projectName',
-        message: 'What is your project name?',
-        validate: (value) => value.length > 0 || 'Project name is required',
-      });
-      projectName = response.projectName;
-    }
-
-    // Validate project name
-    if (!/^[a-zA-Z0-9-_]+$/.test(projectName)) {
-      console.error(chalk.red('Project name can only contain letters, numbers, hyphens, and underscores'));
-      process.exit(1);
-    }
-
-    // Check if directory exists
-    if (fs.existsSync(projectName)) {
-      const { overwrite } = await prompts({
-        type: 'confirm',
-        name: 'overwrite',
-        message: `Directory ${projectName} already exists. Overwrite it?`,
-      });
-
-      if (!overwrite) {
-        process.exit(0);
-      }
-
-      // Remove existing directory
-      fs.rmSync(projectName, { recursive: true, force: true });
-    }
-
-    await createProject(projectName);
-  });
-
-program.parse(); 
+createProject(); 

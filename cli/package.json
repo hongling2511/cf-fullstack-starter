@@ -1,6 +1,6 @@
 {
   "name": "create-cf-fullstack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool to create new Cloudflare Fullstack projects",
   "main": "index.js",
   "type": "module",
@@ -36,4 +36,4 @@
     "ora": "^7.0.1",
     "prompts": "^2.4.2"
   }
-} 
+}
