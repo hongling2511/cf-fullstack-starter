@@ -1,98 +1,122 @@
 # Cloudflare Fullstack Starter
 
-A modern fullstack starter template using Cloudflare Workers, D1, and React.
+一个基于 Cloudflare Pages 和 Workers 的全栈应用模板。
 
-## 🚀 快速开始
+## 特性
 
-### 前置要求
-- Node.js 18+
-- pnpm 8+
-- Wrangler CLI (`pnpm install -g wrangler`)
+- 🚀 基于 Vite 和 React 的前端
+- ⚡️ 基于 Cloudflare Workers 的后端
+- 📦 使用 pnpm workspace 管理 monorepo
+- 🔄 完整的 CI/CD 工作流
+- 🔑 内置环境变量管理
+- 🧪 预配置的测试工具
+- 📝 ESLint 和 Prettier 代码规范
 
-### 安装依赖
+## 快速开始
+
 ```bash
-pnpm install
+# 创建新项目
+npx create-cf-fullstack my-project
+
+# 进入项目目录
+cd my-project
+
+# 启动开发服务器
+pnpm dev
 ```
 
-### 开发环境设置
-
-1. 启动前端开发服务器:
-```bash
-pnpm --filter frontend dev
-```
-
-2. 启动后端开发服务器:
-```bash
-pnpm --filter backend wrangler dev
-```
-
-3. 初始化数据库:
-```bash
-wrangler d1 create my-d1-db
-wrangler d1 execute my-d1-db --file=./schema.sql
-```
-
-## 📦 技术栈
-
-### 前端
-- Vite + React
-- Tailwind CSS
-- TypeScript
-- ESLint + Prettier
-
-### 后端
-- Cloudflare Workers
-- D1 (SQLite)
-- itty-router
-- TypeScript
-
-### 开发工具
-- pnpm (Monorepo)
-- Wrangler
-- ESLint + Prettier
-- Husky + lint-staged
-
-## 🏗️ 项目结构
+## 项目结构
 
 ```
 .
-├── frontend/                # 前端项目
-│   ├── src/
-│   │   ├── components/     # React 组件
-│   │   ├── hooks/         # 自定义 Hooks
-│   │   ├── services/      # API 服务
-│   │   ├── utils/         # 工具函数
-│   │   └── types/         # TypeScript 类型定义
-│   └── public/            # 静态资源
-│
-├── backend/                # 后端项目
-│   ├── src/
-│   │   ├── routes/        # API 路由
-│   │   ├── services/      # 业务逻辑
-│   │   ├── utils/         # 工具函数
-│   │   └── types/         # TypeScript 类型定义
-│   └── migrations/        # 数据库迁移
-│
-└── package.json           # 项目配置
+├── frontend/          # 前端项目
+├── backend/           # 后端项目
+├── cli/              # CLI 工具
+├── .github/          # GitHub Actions 配置
+├── package.json      # 项目配置
+└── README.md         # 项目文档
 ```
 
-## 🔧 开发指南
+## 环境变量
 
-### 代码规范
-- 使用 ESLint 进行代码检查
-- 使用 Prettier 进行代码格式化
-- 提交前自动运行 lint 和测试
+在开发之前，请确保正确设置以下环境变量：
 
-### 测试
-- 前端单元测试: `pnpm --filter frontend test`
-- 前端 E2E 测试: `pnpm --filter frontend test:e2e`
-- 后端测试: `pnpm --filter backend test`
+### 前端环境变量 (frontend/.env)
 
-### 部署
-1. 前端部署到 Cloudflare Pages
-2. 后端部署到 Cloudflare Workers
-3. 数据库使用 Cloudflare D1
+```env
+VITE_API_URL=http://localhost:8787
+```
 
-## 📝 许可证
+### 后端环境变量 (backend/.env)
+
+```env
+DATABASE_URL=file:./dev.db
+NODE_ENV=development
+```
+
+### Cloudflare 环境变量
+
+```env
+CLOUDFLARE_API_TOKEN=your-api-token
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+```
+
+## CI/CD
+
+项目使用 GitHub Actions 进行自动化构建、测试和部署。
+
+### CI 工作流
+
+- 在每次推送和 PR 时运行
+- 运行代码检查（ESLint）
+- 运行测试
+- 构建前端和后端代码
+
+### CD 工作流
+
+- 在 main 分支更新时自动部署
+- 支持手动触发部署
+- 自动部署前端到 Cloudflare Pages
+- 自动部署后端到 Cloudflare Workers
+
+### 配置部署
+
+1. 在 GitHub 仓库设置中添加以下 Secrets：
+   - `CLOUDFLARE_API_TOKEN`: Cloudflare API 令牌
+   - `CLOUDFLARE_ACCOUNT_ID`: Cloudflare 账户 ID
+   - `VITE_API_URL`: 生产环境的 API URL
+
+2. 首次部署：
+   - 在 Cloudflare Pages 中创建前端项目
+   - 在 Cloudflare Workers 中创建后端项目
+   - 确保 wrangler.toml 中的配置正确
+
+## 开发
+
+```bash
+# 安装依赖
+pnpm install
+
+# 启动开发服务器
+pnpm dev
+
+# 运行测试
+pnpm test
+
+# 代码检查
+pnpm lint
+
+# 构建项目
+pnpm build
+
+# 部署项目
+pnpm deploy
+```
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 许可
 
 MIT
