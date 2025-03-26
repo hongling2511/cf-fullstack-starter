@@ -14,22 +14,33 @@ const __dirname = dirname(__filename);
 
 const TEMPLATE_REPO = 'https://github.com/hongling2511/cf-fullstack-starter.git';
 
+async function getProjectName(args) {
+  // 如果提供了命令行参数，使用第一个参数作为项目名
+  const argProjectName = args[2];
+  if (argProjectName) {
+    return argProjectName;
+  }
+
+  // 否则，通过交互式提示获取项目名
+  const response = await prompts({
+    type: 'text',
+    name: 'projectName',
+    message: '请输入项目名称:',
+    validate: value => value.length > 0 ? true : '项目名称不能为空'
+  });
+
+  return response.projectName;
+}
+
 async function createProject() {
   try {
-    // 获取项目名称
-    const response = await prompts({
-      type: 'text',
-      name: 'projectName',
-      message: '请输入项目名称:',
-      validate: value => value.length > 0 ? true : '项目名称不能为空'
-    });
-
-    if (!response.projectName) {
+    const projectName = await getProjectName(process.argv);
+    
+    if (!projectName) {
       console.log('项目创建已取消');
       return;
     }
 
-    const projectName = response.projectName;
     const projectPath = join(process.cwd(), projectName);
 
     // 检查目录是否已存在
