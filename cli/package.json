@@ -8,8 +8,27 @@
     "create-cf-fullstack": "./index.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prepublishOnly": "chmod +x index.js"
   },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "react",
+    "fullstack",
+    "starter",
+    "template"
+  ],
+  "author": "hongling2511",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hongling2511/cf-fullstack-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hongling2511/cf-fullstack-starter/issues"
+  },
+  "homepage": "https://github.com/hongling2511/cf-fullstack-starter#readme",
   "dependencies": {
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
