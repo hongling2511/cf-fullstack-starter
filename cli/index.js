@@ -66,6 +66,10 @@ async function createProject() {
       execSync('npm install -g pnpm', { stdio: 'inherit' });
     }
 
+    // 设置 pnpm workspace
+    console.log('正在设置 workspace...');
+    execSync('pnpm setup', { stdio: 'inherit' });
+
     // 安装依赖
     console.log('正在安装依赖...');
     execSync('pnpm install', { stdio: 'inherit' });
