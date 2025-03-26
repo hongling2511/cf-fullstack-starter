@@ -3,7 +3,7 @@
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, copyFileSync } from 'fs';
 import prompts from 'prompts';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -52,9 +52,23 @@ async function createProject() {
     // 初始化新的 git 仓库
     execSync('git init', { stdio: 'inherit' });
 
+    // 复制 .env.example 到 .env
+    if (existsSync('.env.example')) {
+      copyFileSync('.env.example', '.env');
+      console.log('已创建 .env 文件');
+    }
+
+    // 检查是否安装了 pnpm
+    try {
+      execSync('pnpm --version', { stdio: 'ignore' });
+    } catch (error) {
+      console.log('正在安装 pnpm...');
+      execSync('npm install -g pnpm', { stdio: 'inherit' });
+    }
+
     // 安装依赖
     console.log('正在安装依赖...');
-    execSync('npm install', { stdio: 'inherit' });
+    execSync('pnpm install', { stdio: 'inherit' });
 
     console.log(`
 项目创建成功！
@@ -65,13 +79,13 @@ async function createProject() {
    cd ${projectName}
 
 2. 启动开发服务器：
-   npm run dev
+   pnpm dev
 
 3. 构建项目：
-   npm run build
+   pnpm build
 
 4. 部署到 Cloudflare：
-   npm run deploy
+   pnpm deploy
 
 祝您开发愉快！
     `);
