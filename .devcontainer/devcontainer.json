@@ -1,0 +1,17 @@
+{
+  "name": "Cloudflare Fullstack Starter",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [5173, 8787],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next"
+      ]
+    }
+  },
+  "postCreateCommand": "pnpm install",
+  "remoteUser": "node"
+} 

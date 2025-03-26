@@ -1,0 +1,20 @@
+{
+  "name": "create-cf-fullstack",
+  "version": "1.0.0",
+  "description": "CLI tool to create new Cloudflare Fullstack projects",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "create-cf-fullstack": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "execa": "^8.0.1",
+    "ora": "^7.0.1",
+    "prompts": "^2.4.2"
+  }
+} 
