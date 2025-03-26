@@ -3,7 +3,7 @@
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync, mkdirSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync, copyFileSync, writeFileSync } from 'fs';
 import prompts from 'prompts';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -52,11 +52,32 @@ async function createProject() {
     // 初始化新的 git 仓库
     execSync('git init', { stdio: 'inherit' });
 
-    // 复制 .env.example 到 .env
-    if (existsSync('.env.example')) {
-      copyFileSync('.env.example', '.env');
-      console.log('已创建 .env 文件');
-    }
+    // 创建环境变量文件
+    console.log('正在创建环境变量文件...');
+    
+    // 根目录的 .env
+    const rootEnv = `# Frontend
+VITE_API_URL=http://localhost:8787
+
+# Backend
+DATABASE_URL=file:./dev.db
+NODE_ENV=development
+
+# Cloudflare
+CLOUDFLARE_API_TOKEN=your-api-token
+CLOUDFLARE_ACCOUNT_ID=your-account-id`;
+    writeFileSync('.env', rootEnv);
+
+    // 前端的 .env
+    const frontendEnv = `VITE_API_URL=http://localhost:8787`;
+    writeFileSync('frontend/.env', frontendEnv);
+
+    // 后端的 .env
+    const backendEnv = `DATABASE_URL=file:./dev.db
+NODE_ENV=development`;
+    writeFileSync('backend/.env', backendEnv);
+
+    console.log('已创建环境变量文件');
 
     // 检查是否安装了 pnpm
     try {
